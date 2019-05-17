@@ -174,22 +174,25 @@ public class BackgroundApplication {
 
 <slide class="bg-black-blue aligncenter">
 
-## 四大注解
+## Spring 四大注解
 
 ---
 
 :::column
 #### @Service
+对应业务层的 Bean
 
 ---
 #### @Repository
+对应数据访问层的 Bean
 
 ---
 #### @Component
+定义受 Spring 管理的组件
 
 ---
 #### @Controller
-定义控制器类
+定义用户控制器类，对应表现层的 Bean
 
 通常配合 @RequestMapping 注解方法
 :::
@@ -299,6 +302,7 @@ public class AdController {
 ---
 
 模板引擎（Spring Boot 官方推荐）
+
 :::note
 
 使用前提：在 maven 中添加对应的模块
@@ -528,7 +532,7 @@ private void addModelBeforeReturnIndex(Model model) {
     </th>
 </tr></thead>
 <tbody>
-    <tr th:each="user, status: ${userList}">
+    <tr th:each="user, status: ${userList}"> <!-- 相当于 jctl 中的 forEach，status 是一个状态变量（包含count、first等属性） -->
         <th scope="row" th:text="|${status.count}|"></th>
         <td class="list" th:each="field: ${fields}">
             <span th:if="${field.getName()=='signDate'}" th:text="${#dates.format(user[field.getName()],'yyyy-MM-dd')}"></span>
@@ -537,6 +541,19 @@ private void addModelBeforeReturnIndex(Model model) {
     </tr>
 </tbody>
 ```
+:::note
+
+status 是状态变量，包含下列属性：
+
+* index：当前迭代对象的迭代索引，从0开始，这是索引属性
+* count：当前迭代对象的迭代索引，从1开始，这个是统计属性
+* size：迭代变量元素的总量，这是被迭代对象的大小属性
+* current：当前迭代变量
+* even/odd：布尔值，当前循环是否是偶数/奇数（从0开始计算）
+* first：布尔值，当前循环是否是第一个
+* last：布尔值，当前循环是否是最后一个
+
+:::
 <slide class="aligncenter">
 ```html {.animated.fadeInUp}
 <!-- residentceList 是从路由控制器传过来的待渲染显示的数据（对象链表） -->
@@ -551,10 +568,10 @@ private void addModelBeforeReturnIndex(Model model) {
 </tr>
 </thead>
 <tbody>
-    <tr th:each="emp, status: ${residenceList}">
+    <tr th:each="residence, status: ${residenceList}"> 
         <th scope="row" th:text="|${status.count}|"></th>
-        <td class="list" th:each="field: ${fields}" th:text="${emp[field.getName()]}"></td>
-        <td class="list"><a th:href="'bind?id='+${emp[fields.get(0).getName()]}">绑定</a></td>
+        <td class="list" th:each="field: ${fields}" th:text="${residence[field.getName()]}"></td>
+        <td class="list"><a th:href="'bind?id='+${residence[fields.get(0).getName()]}">绑定</a></td>
     </tr>
 </tbody>
 ```
