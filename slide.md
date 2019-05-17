@@ -9,7 +9,7 @@ plugins:
 
 By JasonZhang {.text-intro}
 
-[:fa-github: Github](https://github.com/DarkYoung/ad-web-ppt){.button.ghost}
+[:fa-github: Github](https://github.com/DarkYoung/ad-web-ppt){.button.ghost.flipInX}
 
 
 <slide :class="size-60 aligncenter">
@@ -301,8 +301,10 @@ public class AdController {
 模板引擎（Spring Boot 官方推荐）
 :::note
 
-使用前提，和springboot所需要的其他依赖包一样，可以在maven中添加对应的依赖
+使用前提：在 maven 中添加对应的模块
 指定命名空间，这样就可以根据语法规则来使用thymeleaf了
+
+模板引擎的作用都是将模板（页面）和数据进行整合然后输出显示
 
 :::
 
@@ -479,9 +481,41 @@ private void addModelBeforeReturnIndex(Model model) {
 
 :::
 <slide class="aligncenter">
+#### th:fragment
+```java {.animated.fadeInUp}
+        mav = new ModelAndView("index/index"); // 使用 index 目录下的 index.html 进行渲染显示
+        page.setPageIndex(Page.Index.HOME); // 设置当前（首页）Tab 高亮
+        mav.addObject("page", page);
+        return mav;   
+```
+```html {.animated.fadeInUp.delay-400}
+<!-- header.html -->
+<ul class="nav nav-tabs" th:fragment="fragment-header"> <!-- 声明一个碎片，命名为 fragment-header -->
+    <!-- 根据不同参数（当前活动页面）高亮不同 tab 选项 -->
+    <li role="presentation" th:class="${page.getPageIndex()==0}?'active'"><a th:href="@{/index}">Home</a></li>
+    <li role="presentation" th:class="${page.getPageIndex()==1}?'active'"><a th:href="@{/property/}">房屋住户管理</a></li>
+    <!-- …… 其他 Tab 选项 …… -->
+</ul>
+```
+```html {.animated.fadeInUp.delay-800}
+<div id="header"> <!-- index.html -->
+    <div th:replace="~{header :: fragment-header}"></div> <!-- 将当前元素替换为 header.html 文件下定义的 fragment-header 碎片 -->
+</div>
+```
+
+:::flexblock {.animated.fadeInUp.delay-800}
+[:fa-github: 源代码](https://github.com/DarkYoung/Property_Management_System/blob/master/src/main/resources/templates/header.html){.button.ghost.radius}
+
+---
+[:fa-link: 演示](http://pms.darkyoung.cn:9999/index){.button.radius}
+:::
+
+:::note
+本次课程使用的 Demo 不方便演示，因此使用了上学期《数据库设计》的物业管理系统项目
+:::
+<slide class="aligncenter">
 
 ```html {.animated.fadeInUp}
-<table class="table table-bordered table-striped">
 <caption th:text="'用户数目: ' + ${userList.size()} + ''"></caption>
 <thead class="thead-dark"><tr>
     <th scope="col" th:text="'#'+${userList.size()}"></th>
@@ -502,8 +536,35 @@ private void addModelBeforeReturnIndex(Model model) {
         </td>
     </tr>
 </tbody>
-</table>
 ```
+<slide class="aligncenter">
+```html {.animated.fadeInUp}
+<!-- residentceList 是从路由控制器传过来的待渲染显示的数据（对象链表） -->
+<caption th:text="${title}+'：共' + ${residenceList.size()} + '条'"></caption>
+<thead class="thead-dark">
+<tr>
+    <th scope="col" th:text="'#'+${residenceList.size()}"></th>
+    <!-- fields 为对象声明的属性集合（通过反射得到） -->
+    <!-- FOEMap 是一个 JSONObject，key 为 Bean 定义的属性名， value 为对应的中文/英文名（方便国际化处理）-->
+    <th scope="col" th:each="field: ${fields}" th:text="${FOEMap[field.getName()]}"></th>
+    <th scope="col">绑定户主</th>
+</tr>
+</thead>
+<tbody>
+    <tr th:each="emp, status: ${residenceList}">
+        <th scope="row" th:text="|${status.count}|"></th>
+        <td class="list" th:each="field: ${fields}" th:text="${emp[field.getName()]}"></td>
+        <td class="list"><a th:href="'bind?id='+${emp[fields.get(0).getName()]}">绑定</a></td>
+    </tr>
+</tbody>
+```
+:::flexblock {.animated.fadeInUp.delay-800}
+[:fa-github: 源代码](https://github.com/DarkYoung/Property_Management_System/blob/master/src/main/resources/templates/property/showIdleResidences.html){.button.ghost.radius}
+
+---
+[:fa-link: 演示](http://pms.darkyoung.cn:9999/property/idle){.button.radius}
+:::
+
 <slide :class="aligncenter">
 
 
