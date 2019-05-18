@@ -151,8 +151,8 @@ springboot 的核心就是注解。springboot 通过各种组合注解，极大�
 ---
 让 springboot 自动给程序进行必要的配置
 * @Configuration：等同于 spring 的 XML 配置文件
-* @EnableAutoConfiguration：启用自动配置
-* @ComponentScan：组件扫描，可以自动发现和装配一些 Bean
+* @EnableAutoConfiguration：启用自动配置，尝试根据添加的 jar 包一拉自动配置 Spring 项目
+* @ComponentScan：组件扫描，可以自动发现和装配一些 Bean（包括@Component、@Controller、@Service等，并注册成 Bean），通常使用该注解搜索并注册 Beans，然后使用 @Autowired 注解导入
 
 ```java {.animated.fadeInUp.delay-400}
 @SpringBootApplication
@@ -198,6 +198,9 @@ public class BackgroundApplication {
 :::
 
 :::note
+@Component 泛指组件，当定义的组件不好归类时，可以使用该注解进行标注
+
+@Repository 注解可以确保 Dao 提供异常转译
 
 @Controller 用于定义控制器类，在 springboot 项目中有控制器将用户发来的 URL 请求转发到对应的服务接口（Service 层），一般在这个注解的类中，通常配合 @RequestMapping 注解方法
 
@@ -220,7 +223,7 @@ public class UserServiceImpl implements UserService {
 
 ```java {.animated.fadeInRight}
 @Controller
-@RequestMapping("/")  // 一级路由
+@RequestMapping("/")  // 表示该控制器处理所有 classpath:/templates/ 的 URL 请求
 public class LoginController {
     // 全部基于 Thymeleaf 的默认配置，前缀为 classpath:/templates/ 后缀为.html
     // 映射路径为 classpath:/templates/login.html classpath:/templates/index.html
