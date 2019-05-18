@@ -1,23 +1,24 @@
-title: 高级Web课堂演示
+title: 高级Web课堂演示-Part2
 speaker: 张健
 plugins:
     - echarts
 
 <slide class="bg-black-blue aligncenter" image="https://source.unsplash.com/C1HhAQrbykQ/ .dark">
 
-# 高级Web课堂演示 {.text-landing.text-shadow}
+# Spring Boot 注解 {.text-shadow}
+# Thymeleaf 模板引擎 {.text-shadow}
 
-By JasonZhang {.text-intro}
+By 张健 {.text-intro}
 
 [:fa-github: Github](https://github.com/DarkYoung/ad-web-ppt){.button.ghost.flipInX}
 
 
-<slide :class="size-60 aligncenter">
+<slide class="bg-gradient-r aligncenter">
 
 # Spring Boot 的核心
 ---
 
-### `注解`
+### 注解
 
 :::note
 
@@ -172,7 +173,7 @@ public class BackgroundApplication {
 
 :::
 
-<slide class="bg-black-blue aligncenter">
+<slide class="aligncenter">
 
 ## Spring 四大注解
 
@@ -194,7 +195,6 @@ public class BackgroundApplication {
 #### @Controller
 定义用户控制器类，对应表现层的 Bean
 
-通常配合 @RequestMapping 注解方法
 :::
 
 :::note
@@ -295,7 +295,7 @@ public class AdController {
 :::
 
 
-<slide :class="size-60 aligncenter">
+<slide class="bg-gradient-r aligncenter">
 
 # Thymeleaf
 
@@ -518,6 +518,29 @@ private void addModelBeforeReturnIndex(Model model) {
 本次课程使用的 Demo 不方便演示，因此使用了上学期《数据库设计》的物业管理系统项目
 :::
 <slide class="aligncenter">
+
+```html {.animated.fadeInUp}
+<caption th:text="'用户数目: ' + ${userList.size()} + ''"></caption>
+<thead class="thead-dark"><tr>
+    <th scope="col" th:text="'#'+${userList.size()}"></th>
+    <!-- switch语句，根据变量设置对应的中文字段名 -->
+    <th scope="col" th:each="field: ${fields}" th:switch="${field.getName()}">
+        <label th:case="userPhone">电话</label>
+        <label th:case="name">姓名</label>
+        <label th:case="gender">性别</label>
+        <label th:case="signDate">注册日期</label>
+    </th>
+</tr></thead>
+<tbody>
+    <tr th:each="user, status: ${userList}"> <!-- 相当于 jctl 中的 forEach，status 是一个状态变量（包含count、first等属性） -->
+        <th scope="row" th:text="|${status.count}|"></th>
+        <td class="list" th:each="field: ${fields}">
+            <span th:if="${field.getName()=='signDate'}" th:text="${#dates.format(user[field.getName()],'yyyy-MM-dd')}"></span>
+            <span th:if="${field.getName()!='signDate'}" th:text="${user[field.getName()]}"></span>
+        </td>
+    </tr>
+</tbody>
+```
 
 ```html {.animated.fadeInUp}
 <caption th:text="'用户数目: ' + ${userList.size()} + ''"></caption>
