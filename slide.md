@@ -175,32 +175,31 @@ public class BackgroundApplication {
 
 <slide class="aligncenter">
 
-## Spring 四大注解
-
+## Spring 四大注解(用于软件系统不同层次)
 ---
 
 :::column
-#### @Service
-对应业务层的 Bean
-
----
 #### @Repository
-对应数据访问层的 Bean
+作用在数据访问层
 
 ---
 #### @Component
-定义受 Spring 管理的组件
+定义一个组件（任何层次）
+
+---
+#### @Service
+作用在业务层
 
 ---
 #### @Controller
-定义用户控制器类，对应表现层的 Bean
+作用在控制层
 
 :::
 
 :::note
-@Component 泛指组件，当定义的组件不好归类时，可以使用该注解进行标注
+@Repository 能够将所标注类中抛出的数据访问异常封装为 Spring 的数据访问异常类型（Spring 封装的不同持久化框架抛出的异常，使得异常独立于底层框架）
 
-@Repository 注解可以确保 Dao 提供异常转译
+@Component 泛指组件，当定义的组件不好归类时，可以使用该注解进行标注
 
 @Controller 用于定义控制器类，在 springboot 项目中有控制器将用户发来的 URL 请求转发到对应的服务接口（Service 层），一般在这个注解的类中，通常配合 @RequestMapping 注解方法
 
