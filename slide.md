@@ -222,12 +222,13 @@ public class UserServiceImpl implements UserService {
 @Controller
 @RequestMapping("/")  // 一级路由
 public class LoginController {
-    @RequestMapping(value={"login", "index", ""}) // 二级路由（表示为：一级路由 + 二级路由）
+    // 映射路径为：/templates/login.html /templates
+    @RequestMapping(value={"login", "index", ""}) // 映射为：前缀 + 一级路由 + 二级路由 + 后缀
     public String index(Model model,  @RequestParam(value = "error", required = false) String error) {
         if (error != null) {
             model.addAttribute("error" , "用户名或者密码错误！");
         }
-        //会使用 login/index.html 或 login/index.ftl 模板进行渲染显示
+        //会使用 login/index.html 或 login/index.ftl 模板进行渲染显示，这里使用的是 html 模板文件
         return "login/index";   
     }
 }
@@ -276,7 +277,6 @@ public class AdController {
     @GetMapping(value = "/detail/{id}", produces = "application/json;charset=UTF-8")
     public String getDetailByAdId(@PathVariable("id") String id) {
         JSONObject jsonObject = new DuoDuoJson();
-        AdInfoItem adInfoItem = null;
         //……
         Ad ad = adService.selectByPrimaryKey(parseInt(id));
         //……
@@ -305,9 +305,6 @@ public class AdController {
 
 :::note
 
-使用前提：在 maven 中添加对应的模块
-指定命名空间，这样就可以根据语法规则来使用thymeleaf了
-
 模板引擎的作用都是将模板（页面）和数据进行整合然后输出显示
 
 :::
@@ -325,6 +322,33 @@ public class AdController {
 * Spring Boot 开发的 Web 项目采用打 Jar 包的方式，且使用内置的 Tomcat，因此**默认不支持 JSP** {.tobuild.fadeInRight}
 * 使用**简单**，因为 Spring Boot 已经提供了默认的配置，比如解析的文件前缀、文件后缀、文件编码、缓存等等，只需要写 HTML {.tobuild.fadeInRight}
 
+<slide :class="size-100">
+
+### 使用步骤
+---
+:::div
+* 在 pom.xml 中引入 thymeleaf
+```xml
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-thymeleaf</artifactId>
+</dependency>
+```
+* 配置 thymeleaf
+```yaml
+thymeleaf:
+     cache: false                   # 开发过程中建议关闭缓存   
+     prefix: classpath:/templates/  # 映射文件的前缀
+     suffix: .html                  # 映射文件的后缀
+     encoding: UTF-8                # 编码
+     servlet:
+      content-type: text/html
+     mode: HTML5                    # 启用 HTML5
+
+```
+* 编写模板文件 */*.html
+* 编写访问模板文件对应的 Controller
+:::
 <slide class="aligncenter">
 ### 基本表达式
 ---
@@ -511,36 +535,13 @@ private void addModelBeforeReturnIndex(Model model) {
 [:fa-github: 源代码](https://github.com/DarkYoung/Property_Management_System/blob/master/src/main/resources/templates/header.html){.button.ghost.radius}
 
 ---
-[:fa-link: 演示](http://pms.darkyoung.cn:9999/index){.button.radius}
+[:fa-link: 演示](http://47.102.98.109:9999/index){.button.radius}
 :::
 
 :::note
 本次课程使用的 Demo 不方便演示，因此使用了上学期《数据库设计》的物业管理系统项目
 :::
 <slide class="aligncenter">
-
-```html {.animated.fadeInUp}
-<caption th:text="'用户数目: ' + ${userList.size()} + ''"></caption>
-<thead class="thead-dark"><tr>
-    <th scope="col" th:text="'#'+${userList.size()}"></th>
-    <!-- switch语句，根据变量设置对应的中文字段名 -->
-    <th scope="col" th:each="field: ${fields}" th:switch="${field.getName()}">
-        <label th:case="userPhone">电话</label>
-        <label th:case="name">姓名</label>
-        <label th:case="gender">性别</label>
-        <label th:case="signDate">注册日期</label>
-    </th>
-</tr></thead>
-<tbody>
-    <tr th:each="user, status: ${userList}"> <!-- 相当于 jctl 中的 forEach，status 是一个状态变量（包含count、first等属性） -->
-        <th scope="row" th:text="|${status.count}|"></th>
-        <td class="list" th:each="field: ${fields}">
-            <span th:if="${field.getName()=='signDate'}" th:text="${#dates.format(user[field.getName()],'yyyy-MM-dd')}"></span>
-            <span th:if="${field.getName()!='signDate'}" th:text="${user[field.getName()]}"></span>
-        </td>
-    </tr>
-</tbody>
-```
 
 ```html {.animated.fadeInUp}
 <caption th:text="'用户数目: ' + ${userList.size()} + ''"></caption>
@@ -602,7 +603,7 @@ status 是状态变量，包含下列属性：
 [:fa-github: 源代码](https://github.com/DarkYoung/Property_Management_System/blob/master/src/main/resources/templates/property/showIdleResidences.html){.button.ghost.radius}
 
 ---
-[:fa-link: 演示](http://pms.darkyoung.cn:9999/property/idle){.button.radius}
+[:fa-link: 演示](http://47.102.98.109:9999/property/idle){.button.radius}
 :::
 
 <slide :class="aligncenter">
