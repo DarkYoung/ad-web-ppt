@@ -222,13 +222,14 @@ public class UserServiceImpl implements UserService {
 @Controller
 @RequestMapping("/")  // 一级路由
 public class LoginController {
-    // 映射路径为：/templates/login.html /templates
-    @RequestMapping(value={"login", "index", ""}) // 映射为：前缀 + 一级路由 + 二级路由 + 后缀
+    // 全部基于 Thymeleaf 的默认配置，前缀为 classpath:/templates/ 后缀为.html
+    // 映射路径为 classpath:/templates/login.html classpath:/templates/index.html
+    @RequestMapping(value={"login", "index", ""})
     public String index(Model model,  @RequestParam(value = "error", required = false) String error) {
         if (error != null) {
             model.addAttribute("error" , "用户名或者密码错误！");
         }
-        //会使用 login/index.html 或 login/index.ftl 模板进行渲染显示，这里使用的是 html 模板文件
+        //会使用 login/index.html 模板进行渲染显示，这里使用的是 html 模板文件
         return "login/index";   
     }
 }
@@ -250,7 +251,7 @@ public class LoginController {
     // 路径为 /、/index、/index.html的 URL 都使用此方法处理
     @RequestMapping({"/", "/index", "index.html", ""})
     public String index() {
-        return "ad/index"; // 使用 ad/index.html 或 ad/index.ftl 模板进行渲染显示
+        return "ad/index"; // 使用 ad/index.html 模板进行渲染显示
     }
     // 路径为 /detail/{adId} 的 URL 请求都使用此方法处理（{adId}表示变量）
     @RequestMapping("/detail/{adId}")
@@ -258,7 +259,7 @@ public class LoginController {
         @PathVariable("adId") String adId, 
         Model model) {
         \\……
-        return "ad/detail"; // 使用 ad/detail.html 或 ad/detail.ftl 模板进行渲染显示
+        return "ad/detail"; // 使用 ad/detail.html 模板进行渲染显示
     }
 ```
 
@@ -556,7 +557,9 @@ private void addModelBeforeReturnIndex(Model model) {
     </th>
 </tr></thead>
 <tbody>
-    <tr th:each="user, status: ${userList}"> <!-- 相当于 jctl 中的 forEach，status 是一个状态变量（包含count、first等属性） -->
+    <!-- 相当于 jsp 中的 forEach， user 是要迭代的变量，userList 是要迭代的列表
+    status 是一个状态变量（包含count、first等属性） -->
+    <tr th:each="user, status: ${userList}"> 
         <th scope="row" th:text="|${status.count}|"></th>
         <td class="list" th:each="field: ${fields}">
             <span th:if="${field.getName()=='signDate'}" th:text="${#dates.format(user[field.getName()],'yyyy-MM-dd')}"></span>
