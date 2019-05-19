@@ -1676,6 +1676,10 @@ logging.pattern.file=%d{yyyy/MM/dd-HH:mm} [%thread] %-5level %logger- %msg%n
   一般日志的通用配置见下图 包括启动日志颜色，设置日志级别。输出格式等
 :::
 
+<slide class="aligncenter">
+
+# [:fa-link: 完整的演示](http://47.100.106.153:18080){.button.radius}
+
 <slide :class="aligncenter">
 
 
