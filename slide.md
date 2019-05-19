@@ -1,4 +1,4 @@
-title: 高级Web课堂演示-Part1
+title: 高级Web课堂演示
 speaker: 张健
 plugins:
     - echarts
