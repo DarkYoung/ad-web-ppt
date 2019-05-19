@@ -2,14 +2,14 @@ title: 高级Web课堂演示-Part1
 speaker: 张健
 plugins:
     - echarts
-<slide class="bg-gradient-r aligncenter">
+<slide class="bg-green aligncenter">
 # Spring Boot
 
 ---
 
 By 谢东方、张健、陈雷远、陈涛 {.text-intro}
 
-<slide class="bg-gradient-r aligncenter" >
+<slide class="bg-green aligncenter" >
 
 # Part 1 {.text-shadow.animated.flipInX}
 
@@ -620,7 +620,9 @@ status 是状态变量，包含下列属性：
 [:fa-link: 演示](http://47.102.98.109:9999/property/idle){.button.radius}
 :::
 
-<slide class="bg-gradient-r aligncenter" >
+
+<!-- Part 2 -->
+<slide class="bg-green aligncenter" >
 
 # Part 2 {.text-shadow.animated.flipInX}
 
@@ -629,6 +631,8 @@ status 是状态变量，包含下列属性：
 #### Spring Security 机制{.text-shadow}
 
 By 谢东方 {.text-intro}
+
+[:fa-github: Github](https://github.com/zhaoyangyingmu){.button.ghost}
 
 <slide image="http://47.102.98.109/img/page1.jpg">
 <slide image="http://47.102.98.109/img/page2.jpg">
@@ -641,8 +645,8 @@ By 谢东方 {.text-intro}
 <slide image="http://47.102.98.109/img/page10.jpg">
 <slide image="http://47.102.98.109/img/page11.jpg">
 
-
-<slide class="bg-gradient-r aligncenter" >
+<!-- Part 3 -->
+<slide class="bg-green aligncenter" >
 
 # Part 3 {.text-shadow.animated.flipInX}
 
@@ -1093,4 +1097,589 @@ N+1问题就是在查询有关联表结果时，一次查询有n条记录，要�
 这样在resultmap也要进行相对于的设置column</br>
 当然，也可以不使用以上association和collection两个标签，直接新建实体类对应自己要查询的字段，再构造新的sql语句</br>
 不过这样比较麻烦，新的实体类也只能用在这个sql语句</br>
+:::
+
+
+<!-- Part 4 -->
+<slide class="bg-green aligncenter" >
+
+# Part 4 {.text-shadow.animated.flipInX}
+
+---
+
+#### redis和日志管理 {.text-shadow}
+
+By 陈雷远 {.text-intro}
+
+
+:::note
+
+大家好，今天由我给大家介绍一下redis数据库以及spring日志管理的相关内容
+
+:::
+
+
+<slide :class="size-60 aligncenter">
+
+## 什么是redis数据库
+---
+
+### Redis是一个开源的使用C语言编写、可基于内存亦可持久化的日志型、Key-Value型、并提供多种语言的API的非关系型数据库
+
+:::note
+首先我们来看一下什么是redis数据库，以及redis数据库相比我们大一学的mysql数据库有什么区别？
+用官方介绍的话来讲，Redis是一个开源的使用C语言编写、可基于内存亦可持久化的日志型、Key-Value型、并提供多种语言的API的非关系型数据库。
+从这段话中，我们可以了解到redis数据库中的数据既可以存在内存中，这样有着较快的访问速度，但关机后删除，同时也可以持久化， 将内存中数据保存在磁盘中，
+重启时候再次加载使用，同时他不同于我们大一学习的mysql以表的方式存储数据，redis中的数据都是以键值对的方式进行存储
+      
+
+:::
+
+<slide>
+
+
+## redis的特点
+
+
+### 性能极高
+---
+### 丰富的数据类型
+---
+### 原子性和管道技术
+
+
+:::note
+接下来我们再来看一下redis数据库的三大特点，第一个特点是 redis数据库有着极高的性能
+Redis能读的速度是110000次/s,写的速度是81000次/s 
+其次Redis支持丰富的数据类型 包括字符串 集合 哈希 列表 有序集合等，这也是我们接下来会详细介绍的部分
+最后redis数据库所有操作都是满足原子性的，多个操作也支持事务 同时拥有管道技术，可以持续向服务器发出请求 
+:::
+
+
+
+
+<slide :class="size-100 aligncenter">
+
+#### 字符串与哈希
+
+---
+:::column
+``` {.animated.fadeInUp}
+redis 127.0.0.1:6379> COMMAND KEY_NAME
+
+redis 127.0.0.1:6379> SET localhost 127.0.0.1
+OK
+redis 127.0.0.1:6379> GET localhost
+"127.0.0.1"
+```
+----
+
+``` {.animated.fadeInUp.delay-400}
+127.0.0.1:6379>  HMSET peter age 16 
+height 160
+weight 50
+OK
+127.0.0.1:6379>  HGETALL peter
+1) "age"
+2) "16"
+3) "height"
+4) "160"
+5) "weight"
+6) "50"
+```
+:::
+
+
+:::note
+
+字符串是redis中最基础的数据类型，而哈希则是一个string类型的field和value的映射表，hash特别适合用于存储对象。
+左边的图通过redis命令行 set命令 设置了字符串类型的键值对 localhost 和127.0.0.1的映射，
+get命令得到localhost在数据库中键所对应的值127.0.0.1
+而右边的图通过HMSET 命令设置了 一个hash，这个hash其实相当于一个对象，描述peter这个人，他有三个属性，年龄身高 体重
+同时在设置好键值对后我们可以通过getall命令得到键对应的hash遍历
+
+:::
+
+
+
+<slide :class="size-100 aligncenter">
+
+#### 集合和有序集合
+
+---
+:::column
+``` {.animated.fadeInUp}
+redis 127.0.0.1:6379> SADD set1 redis
+(integer) 1
+redis 127.0.0.1:6379> SADD set1 mongodb
+(integer) 1
+redis 127.0.0.1:6379> SADD set1 mysql
+(integer) 1
+redis 127.0.0.1:6379> SADD set1 mysql
+(integer) 0
+redis 127.0.0.1:6379> SMEMBERS set1
+
+1) "mysql"
+2) "mongodb"
+3) "redis" 
+```
+----
+
+```{.animated.fadeInUp.delay-400}
+redis 127.0.0.1:6379> ZADD set2 1 redis
+(integer) 1
+redis 127.0.0.1:6379> ZADD set2 2 mongodb
+(integer) 1
+redis 127.0.0.1:6379> ZADD set2 3 mysql
+(integer) 1
+redis 127.0.0.1:6379> ZADD set2 3 mysql
+(integer) 0
+redis 127.0.0.1:6379> ZADD set2 4 mysql
+(integer) 0
+redis 127.0.0.1:6379> ZRANGE set2 0 10 WITHSCORES
+
+1) "redis"
+2) "1"
+3) "mongodb"
+4) "2"
+5) "mysql"
+6) "4"
+```
+:::
+
+
+:::note
+接下来看集合和无序集合
+在Redis 当中集合是 String 类型的无序集合。集合成员是唯一的，这就意味着集合中不能出现重复的数据。
+Redis 中集合是通过哈希表实现的，所以添加，删除，查找的复杂度都是 O(1)。
+在左图的例子中，我们构建了set1这个集合，往里面重复添加了mysql，服务器返回0，同时并未将重复数据存储
+Redis 有序集合和集合一样也是string类型元素的集合,且不允许重复的成员。
+不同的是每个元素都会关联一个double类型的分数。redis正是通过分数来为集合中的成员进行从小到大的排序。
+有序集合的成员是唯一的,但分数(score)却可以重复。 和集合一样，有序集合也是通过哈希表实现的，所以添加，删除，查找的复杂度都是O(1)。 
+再右边的图中我们可以看到当我们重复往有序集合中添加 有着不同分数的mysql值时候，mysql的score进行了更新
+:::
+
+
+<slide :class="size-60 aligncenter">
+
+#### 列表
+
+---
+```{.animated.fadeInUp}
+redis 127.0.0.1:6379> LPUSH list redis
+(integer) 1
+redis 127.0.0.1:6379> LPUSH list mongodb
+(integer) 2
+redis 127.0.0.1:6379> LPUSH list mysql
+(integer) 3
+redis 127.0.0.1:6379> LRANGE list 0 10
+
+1) "mysql"
+2) "mongodb"
+3) "redis"
+```
+
+:::note
+我们再来看redis最后一个数据类型 列表，Redis列表是简单的字符串列表，按照插入顺序排序。
+redis提供给用户非常多的方法，你可以想操作栈一样操作列表 即用pop 和push命令 也可以像数组一样 通过索引去操纵指定值
+还可以像字符串一样，删除列表中间一段内容。在下图的例子中我们用push命令往list中添加值， redis会返回list的长度，同时通过range 命令我们就可以遍历list
+:::
+
+<slide :class="size-60 aligncenter">
+
+#### 事务
+
+---
+``` {.animated.fadeInUp}
+redis 127.0.0.1:6379> MULTI
+OK
+redis 127.0.0.1:6379> SET book-name "Mastering C++ in 21 days"
+QUEUED
+redis 127.0.0.1:6379> GET book-name
+QUEUED
+redis 127.0.0.1:6379> SADD tag "C++" "Programming" "Mastering Series"
+QUEUED
+redis 127.0.0.1:6379> SMEMBERS tag
+QUEUED
+redis 127.0.0.1:6379> EXEC
+1) OK
+2) "Mastering C++ in 21 days"
+3) (integer) 3
+4) 1) "Mastering Series"
+   2) "C++"
+   3) "Programming"
+```
+
+:::note
+1
+
+
+在讲完redis基本数据结构后我们再来看看redis的事务
+以下是一个事务的例子， 它先以 MULTI 命令开始一个事务， 然后将多个命令入队到事务中， 最后由 EXEC 命令触发事务， 一并执行事务中的所有命令：
+Redis会将一个事务中的所有命令序列化，然后按顺序执行。Redis保证了不在一个事务的执行过程中插入执行另一个客户端发出的请求。这样Redis便将这些命令作为一个单独的隔离操作执行。
+在一个Redis事务中，Redis要么执行其中的所有命令，要么什么都不执行。因此，Redis事务能够保证原子性。
+:::
+
+
+<slide :class="size-60">
+
+#### 管道技术
+
+---
+Redis是一种基于客户端-服务端模型以及请求/响应协议的TCP服务。这意味着通常情况下一个请求会遵循以下步骤：
+- 客户端向服务端发送一个查询请求，并监听Socket返回，通常是以阻塞模式，等待服务端响应。
+- 服务端处理命令，并将结果返回给客户端。
+
+Redis 管道技术可以在服务端未响应时，客户端可以继续向服务端发送请求，并最终一次性读取所有服务端的响应。
+
+``` {.animated.fadeInUp}
+$(echo -en "PING\r\n SET demokey redis\r\nGET demokey\r\nINCR 
+visitor\r\nINCR visitor\r\nINCR visitor\r\n"; sleep 10) | nc localhost 6379
+
++PONG
++OK
+redis
+:1
+:2
+:3
+```
+
+:::note
+Redis是一种基于客户端-服务端模型以及请求/响应协议的TCP服务。这意味着通常情况下一个请求会遵循以下步骤：
+- 客户端向服务端发送一个查询请求，并监听Socket返回，通常是以阻塞模式，等待服务端响应。
+- 服务端处理命令，并将结果返回给客户端。
+
+Redis 管道技术可以在服务端未响应时，客户端可以继续向服务端发送请求，并最终一次性读取所有服务端的响应。
+在以上实例中我们通过使用 PING 命令查看redis服务是否可用， 之后我们设置了 demokey 的值为 redis，然后我们获取 demokey 的值并使得 visitor 自增 3 次。
+
+在返回的结果中我们可以看到这些命令一次性向 redis 服务提交，并最终一次性读取所有服务端的响应
+:::
+
+
+
+
+
+
+
+
+<slide :class="size-120 aligncenter">
+### spring连接redis数据库
+```maven {.animated.fadeInLeft}
+//1.配置maven依赖
+<properties>
+    <!-- redis 版本 -->
+    <redis.version>2.9.0</redis.version>
+    <spring.redis.version>1.8.4.RELEASE</spring.redis.version>
+</properties>
+<dependency>
+    <groupId>redis.clients</groupId>
+    <artifactId>jedis</artifactId>
+    <version>${redis.version}</version>
+</dependency>
+<dependency>
+    <groupId>org.springframework.data</groupId>
+    <artifactId>spring-data-redis</artifactId>
+    <version>${spring.redis.version}</version>
+</dependency>
+```
+:::note
+1
+
+
+再介绍完redis数据库基本信息后，我们再来看看spring 是如何整合redis数据库的，首先是maven配置，要将redis对应版本，和依赖写进去
+:::
+
+
+<slide :class="size-120 aligncenter">
+### spring连接redis数据库
+```xml {.animated.fadeInLeft}
+//2.设置redis数据库
+ <!-- 加载配置文件 -->  
+    <context:property-placeholder location="classpath:redis.properties" />  
+    <!-- redis数据源 -->
+    <bean id="poolConfig" class="redis.clients.jedis.JedisPoolConfig">
+        <!-- 最大空闲数 -->
+        <property name="maxIdle" value="${redis.maxIdle}" />
+        <!-- 最大空连接数 -->
+        <property name="maxTotal" value="${redis.maxTotal}" />
+        <!-- 最大等待时间 -->
+        <property name="maxWaitMillis" value="${redis.maxWaitMillis}" />
+        <!-- 连接超时时是否阻塞，false时报异常,ture阻塞直到超时, 默认true -->
+         <property name="blockWhenExhausted" value="${redis.blockWhenExhausted}" /> 
+        <!-- 返回连接时，检测连接是否成功 -->
+        <property name="testOnBorrow" value="${redis.testOnBorrow}" />
+    </bean>
+
+    <!-- Spring-redis连接池管理工厂 -->
+    <bean id="jedisConnectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory">
+        <!-- IP地址 -->
+        <property name="hostName" value="${redis.host}" />
+        <!-- 端口号 -->
+        <property name="port" value="${redis.port}" />
+        <!-- 超时时间 默认2000-->
+        <property name="timeout" value="${redis.timeout}" />
+        <!-- 连接池配置引用 -->
+        <property name="poolConfig" ref="poolConfig" />
+        <!-- usePool：是否使用连接池 -->
+        <property name="usePool" value="true"/>
+    </bean>
+
+```
+
+:::note
+其次我们利用property文件对redis数据库进行一些设置包括redis数据源，最大空闲数，
+
+最大空连接数 ，最大等待时间，IP地址 端口号等等
+:::
+
+
+<slide :class="size-120 aligncenter">
+### spring连接redis数据库
+```java {.animated.fadeInLeft}
+//3. redisUtil工具类
+ public final class RedisUtil {  
+    private Logger logger = Logger.getLogger(RedisUtil.class);  
+    private RedisTemplate<Serializable, Object> redisTemplate;  
+  
+    //删除value
+    public void remove(final String... keys) {  
+        for (String key : keys) {  
+            remove(key);  
+        }  
+    }  
+  
+    //删除key
+    public void removePattern(final String pattern) {  
+        Set<Serializable> keys = redisTemplate.keys(pattern);  
+        if (keys.size() > 0)  
+            redisTemplate.delete(keys);  
+    }  
+  
+    //读取缓存
+    public Object get(final String key) {  
+        Object result = null;  
+        ValueOperations<Serializable, Object> operations = redisTemplate  
+                .opsForValue();  
+        result = operations.get(key);  
+        return result;  
+    }  
+  
+    //写入缓存
+    public boolean set(final String key, Object value) {  
+        boolean result = false;  
+        try {  
+            ValueOperations<Serializable, Object> operations = redisTemplate  
+                    .opsForValue();  
+            operations.set(key, value);  
+            result = true;  
+        } catch (Exception e) {  
+            e.printStackTrace();  
+        }  
+        return result;  
+    }    
+    
+  
+    public void setRedisTemplate(  
+            RedisTemplate<Serializable, Object> redisTemplate) {  
+        this.redisTemplate = redisTemplate;  
+    }  
+}  
+```
+:::note
+接着我们可以构造一个redis util类，对一些基本操作进行封装
+
+ 方便我们使用 包括 插入 删除，对于缓存的控制也可以放在这里面
+:::
+
+
+<slide :class="size-120 aligncenter">
+### spring连接redis数据库
+```java {.animated.fadeInLeft}
+//4.配置bean
+public class User implements Serializable{
+
+    private static final long serialVersionUID = 1L;
+    private int uid;
+    private String userName;
+    private String passWord;
+    private int salary;
+    public int getUid() {
+        return uid;
+    }
+    public void setUid(int uid) {
+        this.uid = uid;
+    }
+    public String getUserName() {
+        return userName;
+    }
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+    public String getPassWord() {
+        return passWord;
+    }
+    public void setPassWord(String passWord) {
+        this.passWord = passWord;
+    }
+    public int getSalary() {
+        return salary;
+    }
+    public void setSalary(int salary) {
+        this.salary = salary;
+    }
+    public User(int uid, String userName, String passWord, int salary) {
+        super();
+        this.uid = uid;
+        this.userName = userName;
+        this.passWord = passWord;
+        this.salary = salary;
+    }
+   
+
+}
+```
+
+:::note
+第四步，则是构造我们需要的bean，注意因为redis
+
+保存对象的时候要求对象是序列化的，所以我们的bean要是实现序列化的接口，
+:::
+
+<slide :class="size-120 aligncenter">
+### spring连接redis数据库
+```java {.animated.fadeInLeft}
+//5. 在service中配置相应方法
+    public User findUserById(int id) {
+        String key = "user_" + id;
+
+        ValueOperations<String, User> operations = redisTemplate.opsForValue();
+
+        boolean hasKey = redisTemplate.hasKey(key);
+        if (hasKey) {
+            User user = operations.get(key);
+            System.out.println("==========从缓存中获得数据=========");
+            System.out.println(user.getUserName());
+            System.out.println("==============================");
+            return user;
+        } else {
+            User user = userDao.findUserById(id);
+            System.out.println("==========从数据表中获得数据=========");
+            System.out.println(user.getUserName());
+            System.out.println("==============================");
+
+            // 写入缓存
+            operations.set(key, user, 5, TimeUnit.HOURS);
+            return user;
+        }
+
+    }
+
+```
+
+:::note
+最后一步就是在service中配置相应方法，比如这个示例代码的方法实现了根据id找user，他首先根据输入的id判断是不是在缓存中，
+如果在则直接从缓存中取，不在则去数据表拿，同时将结果写入缓存之中。
+:::
+
+<slide>
+
+
+## spring 日志管理概述
+##### SpringBoot 内部日志系统使用的是 Commons Logging  
+##### SpringBoot 给 JDKLogging , Log4j2(Log4j也是支持的) , Logback 都提供了默认配置
+##### logging格式
+!![](https://img-blog.csdn.net/20180828112411869?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NvZGVqYXM=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70)
+
+日志时间：精确到毫秒
+日志级别：ERROR， WARN， INFO， DEBUG or TRACE
+进程 id
+分割符：用于区分实际的日志记录
+线程名：括在方括号中
+日志名字：通常是源类名
+日志信息
+
+
+
+
+:::note
+接下来我再给大家介绍下spring日志管理的相关内容
+一般来说网页都会用到日志管理 好的日志管理可以快速定位问题出现的位置，也可以提高代码的阅读性。
+SpringBoot 内部日志系统使用的是 Commons Logging  
+SpringBoot 给 JDKLogging , Log4j2(Log4j也是支持的) , Logback 都提供了默认配置
+我们首先看看spring logging的格式 他的logging包括七部分，第一部分是日志时间：精确到毫秒
+第二部分是日志级别：有ERROR， WARN， INFO， DEBUG or TRACE五个级别
+第三部分是进程 id
+第四部分是分割符：用于区分实际的日志记录
+第五部分是线程名：通常括在方括号中
+第六部分是日志名字：通常是源类名
+最后一部分就是日志信息
+
+:::
+<slide>
+
+
+## 日志级别
+##### 日志级别从低到高依次是：TRACE < DEBUG < INFO < WARN < ERROR < FATAL 
+##### Spring Boot 只会输出比当前级别高的日志，默认的日志级别是 INFO，因此低于 INFO 级别的日志记录都不输出。
+```java
+@SpringBootTest
+@RunWith(SpringRunner.class)
+public class LoggerTest {
+
+    private static final Logger logger = LoggerFactory.getLogger(LoggerTest.class);
+
+    @Test
+    public void test() {
+        logger.trace("trace 级别的日志");
+        logger.debug("debug 级别的日志");
+        logger.info("info 级别的日志");
+        logger.warn("warn 级别的日志");
+        logger.error("error 级别的日志");
+    }
+}
+```
+
+!![](https://img-blog.csdn.net/20180828120828160?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NvZGVqYXM=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70)
+
+:::note
+在spring中日志级别从低到高依次是：TRACE < DEBUG < INFO < WARN < ERROR < FATAL 
+Spring Boot 只会输出比当前级别高的日志，默认的日志级别是 INFO，因此低于 INFO 级别的日志记录都不输出。
+比如下面这个代码运行后，并不能成功输出trace 和debug级别的日志
+
+:::
+<slide>
+## 日志文件输出&通用配置
+##### 默认情况下，Spring Boot 日志仅输出在控制台，不会写入日志文件。如果想要写入日志文件，需要在application.properties 中设置 logging.file 或 logging.path 属性。
+- logging.file：设置文件，可以是绝对路径，也可以是相对路径。
+- logging.path：设置目录，会在该目录下创建一个 spring.log 文件，写入日志内容
+#####  日志文件在达到 10 MB 时会轮换，并且与控制台输出一样，默认情况下会记录 ERROR 级别，WARN 级别和 INFO 级别的消息。 可以使用 logging.file.max-size 属性更改大小限制。
+
+## 日志通用配置
+```
+# 启用日志颜色
+spring.output.ansi.enabled=always
+logging.level.root=INFO
+# mapper 接口所在的包设置为 debug
+logging.level.com.×××.mapper=DEBUG
+# 在当前项目下生成日志文件
+logging.file=./logs/×××.log
+logging.pattern.console=%d{yyyy/MM/dd-HH:mm:ss} [%thread] %-5level %clr(%logger){cyan} %clr(%msg%n){green}
+logging.pattern.file=%d{yyyy/MM/dd-HH:mm} [%thread] %-5level %logger- %msg%n
+```
+
+:::note
+默认情况下，Spring Boot 日志仅输出在控制台，不会写入日志文件。如果想要写入日志文件，需要在application.properties 中设置 logging.file 或 logging.path 属性
+ logging.file比较好理解，就是直接设置文件，可以是绝对路径，也可以是相对路径。
+ logging.path则是设置目录，会在该目录下创建一个 spring.log 文件，写入日志内容
+  日志文件在达到 10 MB 时会轮换，并且与控制台输出一样，默认情况下会记录 ERROR 级别，WARN 级别和 INFO 级别的消息。 
+  可以使用 logging.file.max-size 属性更改大小限制。
+  一般日志的通用配置见下图 包括启动日志颜色，设置日志级别。输出格式等
+:::
+
+<slide :class="aligncenter">
+
+
+# Thanks {.animated.flipInX.delay-400}
+:::note
+我今天的介绍就到这里，谢谢大家
 :::
