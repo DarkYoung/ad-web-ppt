@@ -620,7 +620,477 @@ status 是状态变量，包含下列属性：
 [:fa-link: 演示](http://47.102.98.109:9999/property/idle){.button.radius}
 :::
 
-<slide class="aligncenter">
+<slide class="bg-gradient-r aligncenter" >
+
+# Part 2 {.text-shadow.animated.flipInX}
+
+---
+
+#### Spring Security 机制{.text-shadow}
+
+By 谢东方 {.text-intro}
+
+<slide image="http://47.102.98.109/img/page1.jpg">
+<slide image="http://47.102.98.109/img/page2.jpg">
+<slide image="http://47.102.98.109/img/page3.jpg">
+<slide image="http://47.102.98.109/img/page4.jpg">
+<slide image="http://47.102.98.109/img/page6.jpg">
+<slide image="http://47.102.98.109/img/page7.jpg">
+<slide image="http://47.102.98.109/img/page8.jpg">
+<slide image="http://47.102.98.109/img/page9.jpg">
+<slide image="http://47.102.98.109/img/page10.jpg">
+<slide image="http://47.102.98.109/img/page11.jpg">
 
 
-[Part 2](http://47.100.106.153/adweb/pre/#slide=1){.button.radius.animated.flipInX.delay-400}
+<slide class="bg-gradient-r aligncenter" >
+
+# Part 3 {.text-shadow.animated.flipInX}
+
+---
+
+#### Mybatis {.text-shadow}
+
+By Chen Tao {.text-intro}
+
+[:fa-github: Github](https://github.com/ksky521/nodeppt){.button.ghost}
+
+
+<slide>
+
+# 什么是 *MyBatis*？
+---
+MyBatis 是一款优秀的持久层框架，它支持定制化 SQL、存储过程以及高级映射。MyBatis 避免了几乎所有的 JDBC 代码和手动设置参数以及获取结果集。MyBatis 可以使用简单的 XML 或注解来配置和映射原生类型、接口和 Java 的 POJO（Plain Old Java Objects，普通老式 Java 对象）为数据库中的记录。
+<slide>
+
+# MyBatis 流程
+---
+
+:::steps {.animated.fadeInUp}
+
+SqlSessionFactoryBuilder读取配置文件
+
+---
+
+生成SqlSessionFactory
+
+---
+
+生成SqlSession
+
+---
+
+SqlSession 获取Mapper
+
+--- 
+
+Mapper执行语句
+
+:::
+
+:::note
+没有整合spring boot前面，每次查询都要手动管理sqlSession等，步骤繁琐
+:::
+<slide>
+
+# Spring Boot 结合 MyBatis 
+---
+- 在Spring Boot中不再需要手动管理SqlSessionFactory、SqlSession
+- 在Service直接获取dao，调用dao的函数
+- 该函数会自动映射到mapper文件中sql语句
+- 执行sql语句之后会返回结果给service
+
+<slide>
+
+# Spring Boot 结合 MyBatis 配置
+---
+```xml {.animated.fadeInUp}
+        <dependency>
+            <groupId>org.mybatis.spring.boot</groupId>
+            <artifactId>mybatis-spring-boot-starter</artifactId>
+            <version>2.0.1</version>
+        </dependency>
+```
+:::note
+需要在pom.xml中添加依赖
+:::
+<slide>
+
+# Spring Boot 结合 MyBatis 配置
+---
+```yaml {.animated.fadeInLeft}
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/demo?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+```
+
+```yaml {.animated.fadeInRight}
+mybatis:
+  type-aliases-package: com.estate.estate.entity # 实体类的存放路径
+  mapper-locations: classpath*:mapper/*.xml # mapper的存放路径
+```
+:::note
+在application.yml中配置spring标签下配置数据库基本配置</br>
+在mybatis标签下配置实体类和映射文件的存放路径
+:::
+
+<slide>
+
+# Spring Boot 结合 MyBatis 配置
+---
+```java {.animated.fadeInLeft}
+@SpringBootApplication
+@MapperScan("com.estate.estate.dao")//增加接口所在的包
+public class BackgroundApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(BackgroundApplication.class, args);
+    }
+}
+```
+
+```yaml {.animated.fadeInRight}
+logging: #非必须，用来debug的时候查看输出
+  level:
+    com.estate.estate.dao: DEBUG
+```
+:::note
+需要使用MapperScan注解指明dao层所在的包</br>
+可以增加log输出，方便调试
+:::
+
+<slide>
+
+## MyBatis 映射文件 Mapper
+:::column {.animated.fadeInUp}
+使用@Mapper注解的Java文件
+```java
+@Mapper
+@Component("AdMapper")
+public interface AdMapper {
+    @Select(/*sql语句*/)
+    selectMethod();
+    @Insert(/*sql语句*/)
+    insertMethod();
+    //……
+    
+}
+```
+---
+使用xml的映射文件
+```xml
+<mapper namespace="com.estate.estate.dao.AdMapper">
+  <resultMap id="BaseResultMap" type="..."/>
+  <select id="selectMethod" parameterType="." resultMap=".">
+  <!--....-->
+  </select>
+  <insert id="insertMethod" parameterType="...">
+  <!--....-->
+  </insert>
+  <!--....-->
+</mapper>
+```
+:::
+
+:::note
+MyBatis 的映射文件是进行sql查询的基础</br>
+sql语句都是在mapper中写好，定义好接口</br>
+之后在需要查询的时候直接调用接口，程序就会自动执行对应的语句进行数据库操作</br>
+两种方法都可以作为mapper，可能一看之下使用mapper注解的java文件更为简单</br>
+但是实际上使用xml文件是一个更好的选择，因为xml文件可以复用一些内容</br>
+可以更好的使用动态sql语句</br>
+更主要的是，xml文件可以使用工具自动生成</br>
+:::
+
+<slide>
+
+# better-mybatis-generator 的使用
+---
+一款很好用的自动生成dao、entity、mapper的Intellij插件
+
+:::steps
+
+File
+
+---
+
+Setting
+
+---
+
+Plugins
+
+---
+
+Browse Repositories
+:::
+
+:::note
+这个插件会自动帮我们生成dao层接口、数据库表的实体类、mapper文件、以及操作辅助类example</br>
+对于单表操作的增删改查的sql语句基本做到都可以覆盖</br>
+很大程度上免除了编写sql语句的烦恼</br>
+:::
+
+<slide class="size-100">
+
+## dao、Mapper xml文件
+
+:::column
+```java
+public interface AdMapper {
+    long countByExample(AdExample example);
+
+    int deleteByExample(AdExample example);
+
+    int insert(Ad record);
+
+    List<Ad> selectByExample(AdExample example);
+
+    Ad selectByPrimaryKey(Integer adId);
+
+    int updateByPrimaryKeySelective(Ad record);
+}
+```
+---
+```xml
+<mapper namespace="com.estate.estate.dao.AdMapper">
+  <resultMap id="BaseResultMap" type="com.estate.estate.entity.Ad"/>
+  
+  <sql id="Base_Column_List"/>
+  
+  <select id="countByExample" parameterType="." resultType="."/>
+  
+  <delete id="deleteByExample" parameterType="."/>
+  
+  <insert id="insert" parameterType="."/>
+  
+  <update id="updateByExampleSelective" parameterType="map"/>
+</mapper>
+```
+:::
+
+:::note
+mapper和dao层接口是对应的，接口中的函数在mapper中使用标签属性中的id来进行对应</br>
+mapper中还要定义参数类型、返回类型等</br>
+:::
+<slide>
+
+## 动态sql
+
+:::flexblock 
+
+### if
+
+---
+
+### choose、when
+
+---
+
+### where
+
+---
+
+### foreach
+:::
+
+:::note
+动态sql让sql语句不再是以前的一个sql只能表示一个语句</br>
+它让sql语句可以复用</br>
+:::
+<slide>
+
+## 使用mapper进行增删改查
+---
+```java
+    @Autowired //使用Autowired标签，自动装配
+    private AdMapper adMapper;
+    @Override
+    public int insert(Ad record) {
+        //....
+        return adMapper.insertSelective(record);
+    }
+```
+:::note
+使用Autowired标签，会自动装配</br>
+使用dao的函数的时候，会自动对应到mapper中的sql语句，进行操作</br>
+:::
+<slide>
+
+## 使用Example类
+
+```java
+    @Override
+    public List<Ad> selectInvalidAd() {
+        AdExample adExample = new AdExample();
+        adExample.createCriteria().andValidEqualTo(0);
+        return adMapper.selectByExampleWithBLOBs(adExample);
+    }
+
+    @Override
+    public List<Ad> selectByTitle(String title) {
+        if (title == null || title.trim().length() == 0) {
+            return new ArrayList<>();
+        }
+        AdExample adExample = new AdExample();
+        adExample.createCriteria().andTitleLike("%" + title + "%");
+        return adMapper.selectByExampleWithBLOBs(adExample);
+    }
+```
+:::note
+example类的是在动态sql的基础上实现的，</br>
+使用起来非常方便，</br>
+我们需要使用where语句时候，不需要一个条件写一条sql语句，只要使用example类，使用其中的函数即可</br>
+example类还可以添加limit字句进行分页查询</br>
+:::
+
+<slide>
+
+# MyBatis 高级查询
+
+:::flexblock
+
+#### 嵌套select查询
+
+---
+
+#### 嵌套结果映射
+
+:::
+
+:::note
+高级查询是指多表联合查询，有外键连接时，经常使用到
+:::
+<slide>
+
+# MyBatis 高级查询标签
+
+:::flexblock
+
+```xml
+<association property="" column=""/>
+```
+
+---
+
+```xml
+<collection property="" column=""/>
+```
+
+:::
+
+:::note
+association用于一对一查询时</br>
+collection用于一对多查询时</br>
+:::
+<slide>
+## 示例数据库结构
+:::column
+```
+class
+    id
+    name
+
+```
+---
+```
+student
+    id
+    name
+    class_id
+```
+:::
+
+:::note
+两张表通过外键class_id相关联
+:::
+<slide>
+
+## 对应实体类
+
+:::column
+```java
+public class Clazz implements Serializable {
+    private Integer id;
+
+    private String name;
+
+    private List<Student> studentList;//存储该班的学生
+}
+
+```
+---
+```java
+public class Student implements Serializable {
+    private Integer id;
+
+    private String name;
+
+    private Integer classId;
+
+    private Clazz clazz;//该学生所在班级
+}
+```
+:::
+<slide>
+
+## 嵌套select查询
+
+```xml
+    <resultMap id="BaseResultMap" type="com.example.demo.entity.Clazz">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <collection property="studentList" column="id" select="selectStudent"/>
+    </resultMap>
+    
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+            select
+            <include refid="Base_Column_List"/>
+            from class
+            where id = #{id,jdbcType=INTEGER}
+     </select>
+
+    <select id="selectStudent" parameterType="java.lang.Integer" resultType="com.example.demo.entity.Student">
+        select id , name , class_id as classId from student where class_id=#{id,jdbcType=INTEGER}
+    </select>
+
+```
+:::note
+嵌套select查询，在resultmap中使用再次使用select，select语句要另外再构建</br>
+嵌套select查询实现的sql语句会简单一点，就是两次查询语句，不用join什么的</br>
+但是这样会造成N+1问题</br>
+N+1问题就是在查询有关联表结果时，一次查询有n条记录，要这n条记录关联的其他表的数据，需要再次进行N次查询</br>
+:::
+<slide>
+
+## 嵌套结果映射查询
+
+```xml
+    <resultMap id="Collect" type="com.example.demo.entity.Clazz">
+        <id property="id" column="class_id" jdbcType="INTEGER"/>
+        <result property="name" column="class_name" jdbcType="VARCHAR"/>
+        <collection property="studentList" ofType="com.example.demo.entity.Student">
+            <id property="id" column="student_id" jdbcType="INTEGER"/>
+            <result property="name" column="student_name" jdbcType="VARCHAR"/>
+            <result property="classId" column="class_id" jdbcType="VARCHAR"/>
+        </collection>
+    </resultMap>
+    <select id="selectByPrimaryKey2" parameterType="java.lang.Integer" resultMap="Collect">
+            select
+            class.id as class_id,
+            class.name as class_name,
+            student.id as student_id,
+            student.name as student_name
+            from class left join student on class.id = student.class_id
+            where class.id = #{id,jdbcType=INTEGER}
+    </select>
+
+```
+:::note
+嵌套结果映射查询是将结果进行嵌套映射，首先映射查询对象，然后对对象中的某个变量再次进行映射</br>
+这样做的sql语句写起来会麻烦点，为了避免查询出来的列名相同的情况，最好使用as关键字进行别名修改</br>
+这样在resultmap也要进行相对于的设置column</br>
+当然，也可以不使用以上association和collection两个标签，直接新建实体类对应自己要查询的字段，再构造新的sql语句</br>
+不过这样比较麻烦，新的实体类也只能用在这个sql语句</br>
+:::
