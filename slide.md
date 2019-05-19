@@ -1,16 +1,25 @@
-title: 高级Web课堂演示-Part2
+title: 高级Web课堂演示-Part1
 speaker: 张健
 plugins:
     - echarts
+<slide class="bg-gradient-r aligncenter">
+# Spring Boot
 
-<slide class="bg-black-blue aligncenter" image="https://source.unsplash.com/C1HhAQrbykQ/ .dark">
+---
 
-# Spring Boot 注解 {.text-shadow}
-# Thymeleaf 模板引擎 {.text-shadow}
+By 谢东方、张健、陈雷远、陈涛 {.text-intro}
+
+<slide class="bg-gradient-r aligncenter" >
+
+# Part 1 {.text-shadow.animated.flipInX}
+
+---
+
+#### Spring Boot 注解 & Thymeleaf 模板引擎 {.text-shadow}
 
 By 张健 {.text-intro}
 
-[:fa-github: Github](https://github.com/DarkYoung/ad-web-ppt){.button.ghost.flipInX}
+[:fa-github: Github](https://github.com/DarkYoung){.button.ghost}
 
 
 <slide class="bg-gradient-r aligncenter">
@@ -611,7 +620,7 @@ status 是状态变量，包含下列属性：
 [:fa-link: 演示](http://47.102.98.109:9999/property/idle){.button.radius}
 :::
 
-<slide :class="aligncenter">
+<slide class="aligncenter">
 
 
-# Thanks {.animated.flipInX.delay-400}
+[Part 2](http://47.100.106.153/adweb/pre/#slide=1){.button.radius.animated.flipInX.delay-400}
