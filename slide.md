@@ -1,5 +1,5 @@
 title: 高级Web课堂演示
-speaker: 张健
+speaker: 谢东方、张健、陈雷远、陈涛
 plugins:
     - echarts
 <slide class="bg-green aligncenter">
